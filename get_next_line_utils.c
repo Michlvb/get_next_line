@@ -1,5 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   get_next_line_utils.c                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mlammert <mlammert@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/12/14 16:54:01 by mlammert      #+#    #+#                 */
+/*   Updated: 2021/12/14 21:27:04 by mlammert      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
-#include <stdio.h>
 
 char	*ft_strdup(char *s1)
 {
@@ -44,8 +55,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	char	*strs;
 	size_t	len_s1;
 	size_t	len_s2;
-	int			i;
-	size_t		j;
 
 	if (!s1 && !s2)
 		return (NULL);
@@ -55,18 +64,8 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (!strs)
 		return (NULL);
 	strs[len_s1 + len_s2] = '\0';
-	i = 0;
-	if (s1)
-	{
-		while (s1[i])
-		{
-			strs[i] = s1[i];
-			i++;
-		}
-	}
-	j = 0;
-	while (j < len_s2)
-		strs[i++] = s2[j++];
+	ft_strlcpy(strs, s1, len_s1);
+	ft_strlcpy(strs + len_s1, s2, len_s2);
 	free(s1);
 	s1 = NULL;
 	return (strs);
@@ -85,4 +84,30 @@ void	ft_strlcpy(char *dst, char *src, size_t dstsize)
 		i++;
 	}
 	dst[i] = '\0';
+}
+
+char	*ft_substr(char *s, unsigned int start, size_t len)
+{
+	char			*substr;
+	size_t			i;
+	unsigned int	k;
+
+	k = 0;
+	if ((unsigned int)ft_strlen(s) < start)
+	{
+		return (ft_strdup(""));
+	}
+	i = ft_strlen(s + start);
+	if (i < len)
+		len = i;
+	substr = (char *)malloc(sizeof(char) * (len + 1));
+	if (!substr)
+		return (NULL);
+	while (k < len)
+	{
+		substr[k++] = (char)s[start];
+		start++;
+	}
+	substr[k] = '\0';
+	return (substr);
 }

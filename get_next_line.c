@@ -1,61 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        ::::::::            */
+/*   get_next_line.c                                    :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: mlammert <mlammert@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2021/12/14 16:51:20 by mlammert      #+#    #+#                 */
+/*   Updated: 2021/12/14 21:27:46 by mlammert      ########   odam.nl         */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
-#include <stdio.h>
-
-char	*ft_strchr(char *s, int c);
-
-int	check_newline(char *line)
-{
-	int	i;
-
-	if (!line)
-		return (-1);
-	i = 0;
-	while (line[i])
-	{
-		if (line[i] == '\n')
-			return (i);
-		i++;
-	}
-	return (-1);
-}
-
-char		*ft_substr(char *s, unsigned int start, size_t len)
-{
-	char	*substr;
-	size_t	new_len;
-
-	if (s == NULL)
-		return (NULL);
-	if ((unsigned int)ft_strlen(s) < start)
-		return (ft_strdup(""));
-	new_len = ft_strlen(s + start);
-	if (new_len < len)
-		len = new_len;
-	if (!(substr = (char *)malloc(sizeof(char) * (len + 1))))
-		return (NULL);
-	ft_strlcpy(substr, s + start, len + 1);
-	return (substr);
-}
-
-char	*output_val(char **line)
-{
-    char    *res;
-    char    *old;
-    int     len;
-
-    res = ft_strdup(*line);
-    len = ft_strlen(*line + check_newline(*line) + 1);
-    if (len == 0)
-    {
-        free(*line);
-        *line = NULL;
-        return (res);
-    }
-    old = ft_substr(*line, check_newline(*line) + 1, ft_strlen(ft_strchr(*line, '\n') + 1));
-    free(*line);
-    *line = old;
-	return (res);
-}
+// #include <stdio.h>
 
 char	*ft_strchr(char *s, int c)
 {
@@ -70,25 +26,54 @@ char	*ft_strchr(char *s, int c)
 	return (s);
 }
 
+int	check_newline(char *line)
+{
+	int	i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == '\n')
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+char	*output(char **line)
+{
+	char	*res;
+	char	*old;
+	int		len;
+
+	res = ft_strdup(*line);
+	len = ft_strlen(ft_strchr(*line, '\n') + 1);
+	old = ft_substr(*line, check_newline(*line) + 1, len);
+	free(*line);
+	*line = old;
+	return (res);
+}
+
 char	*free_all(char **line)
 {
-    char *res;
+	char	*res;
 
-    if (*line && check_newline(*line) >= 0)
-        return (output_val(line));
-    else if (ft_strchr(*line, '\0') && **line)
-        res = ft_strdup(*line);
-    else
-        res = NULL;
-    free(*line);
-    *line = NULL;
+	if (!line)
+		return (NULL);
+	if (*line && check_newline(*line) >= 0)
+		return (output(line));
+	else if (ft_strchr(*line, '\0') && **line)
+		res = ft_strdup(*line);
+	else
+		res = NULL;
+	free(*line);
+	*line = NULL;
 	return (res);
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*line;
-
 	char		buf[BUFFER_SIZE + 1];
 	int			nbytes;
 
@@ -99,13 +84,17 @@ char	*get_next_line(int fd)
 	{
 		buf[nbytes] = '\0';
 		line = ft_strjoin(line, buf);
+		if (!line)
+			return (NULL);
 		if (check_newline(line) >= 0)
-			return (output_val(&line));
+		{
+			return (output(&line));
+		}
 		nbytes = read(fd, buf, BUFFER_SIZE);
 	}
-    if (nbytes < 0)
-        return (NULL);
-    buf[nbytes] = '\0';
+	if (nbytes < 0)
+		return (NULL);
+	buf[nbytes] = '\0';
 	line = ft_strjoin(line, buf);
 	return (free_all(&line));
 }
