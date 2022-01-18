@@ -94,9 +94,7 @@ char	*ft_substr(char *s, unsigned int start, size_t len)
 
 	k = 0;
 	if ((unsigned int)ft_strlen(s) < start)
-	{
 		return (ft_strdup(""));
-	}
 	i = ft_strlen(s + start);
 	if (i < len)
 		len = i;

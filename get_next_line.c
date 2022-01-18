@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-// #include <stdio.h>
 
 char	*ft_strchr(char *s, int c)
 {
@@ -87,9 +86,7 @@ char	*get_next_line(int fd)
 		if (!line)
 			return (NULL);
 		if (check_newline(line) >= 0)
-		{
 			return (output(&line));
-		}
 		nbytes = read(fd, buf, BUFFER_SIZE);
 	}
 	if (nbytes < 0)
